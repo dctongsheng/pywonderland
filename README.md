@@ -162,8 +162,7 @@ Wilson 一致生成树算法 [[View Code](./src/wilson/)] [[Wiki](https://en.wik
 <br>
 
 <p align="center">
-<a herf="./img/unstable.png"><img src="./img/unstable.png" width="350"/></a> <a herf="./img/bacteria.png"><img src="./img/bacteria.png" width="350"/></a>
-<a herf="./img/coral.png"><img src="./img/coral.png" width="350"/></a> <a herf="./img/zebrafish.png"><img src="./img/zebrafish.png" width="350"/></a>
+<a herf="./img/unstable.png"><img src="./img/unstable.png" width="350"/></a> <a herf="./img/bacteria.png"><img src="./img/bacteria.png" width="350"/></a><a herf="./img/coral.png"><img src="./img/coral.png" width="350"/></a> <a herf="./img/zebrafish.png"><img src="./img/zebrafish.png" width="350"/></a>
 </p>
 
 <br>
