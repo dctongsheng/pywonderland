@@ -127,7 +127,7 @@ class GrayScott(pyglet.window.Window):
         self.frame_count = 0
         self.video_on = video
         self.skip = 30
-        self.max_frames = 10000
+        self.max_frames = 1000000
 
     def set_viewport(self, width, height):
         gl.glViewport(0, 0, width, height)
@@ -335,5 +335,9 @@ if __name__ == '__main__':
         raise ValueError("param [video] can only be 0 or 1")
     app = GrayScott(args.width, args.height, args.pattern,
                     args.scale, args.video)
+
+    # use this line if you want to start with a preferred config
+    #app.load_config()
+
     print(app.__doc__)
     app.run(fps=300)

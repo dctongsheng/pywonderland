@@ -144,7 +144,7 @@ Newton 迭代分形 [[View Code](./src/misc/newton.py)] [[Wiki](https://en.wikip
 
 ---
 ### Wilson's Uniform Spanning Tree Algorithm Animation
-Wilson 一致生成树算法 [[View Code](./src/wilson/)] [[Wiki](https://en.wikipedia.org/wiki/Loop-erased_random_walk)] [[Mike Bostock's Javascript Animation](https://bl.ocks.org/mbostock/11357811)]
+Wilson 一致生成树算法 [[Code](./src/wilson/)] [[Doc](https://github.com/neozhaoliang/pywonderland/wiki/Wilson's-Uniform-Spanning-Tree-Algorithm-Animation)]
 <br>
 
 <p align="center">
@@ -157,7 +157,7 @@ Wilson 一致生成树算法 [[View Code](./src/wilson/)] [[Wiki](https://en.wik
 
 ---
 ### Reaction-Diffusion Simulation
-反应扩散方程模拟 [[Code](./src/grayscott/)] [[Doc](https://github.com/neozhaoliang/pywonderland/wiki/Reaction-Diffusion-Simulation)] [[Video](./img/grayscott.webm)]
+反应扩散方程模拟 [[Code](./src/grayscott/)] [[Doc](https://github.com/neozhaoliang/pywonderland/wiki/Reaction-Diffusion-Simulation)] [[Video](./img/grayscott.mp4)]
 
 <br>
 
