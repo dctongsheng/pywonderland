@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=unused-argument
+# pylint: disable=redefined-builtin
 
 """
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,6 +42,7 @@ SPECIES = {'bacteria1':       [0.16, 0.08, 0.035, 0.065],
            'spirals_dense':   [0.12, 0.08, 0.020, 0.050],
            'spirals_fast':    [0.10, 0.16, 0.020, 0.050],
            'unstable':        [0.2097, 0.105, 0.018, 0.051],
+           'net':             [0.2097, 0.105, 0.039, 0.058],
            'worms1':          [0.16, 0.08, 0.050, 0.065],
            'worms2':          [0.16, 0.08, 0.054, 0.063],
            'zebrafish':       [0.16, 0.08, 0.035, 0.060],}
@@ -202,17 +204,17 @@ class GrayScott(pyglet.window.Window):
             with self.reaction_shader:
                 self.reaction_shader.set_uniformf('u_mouse', *u_mouse)
 
-    def on_mouse_press(self, x, y, button, modifiers):  # pylint: disable=unused-argument
+    def on_mouse_press(self, x, y, button, modifiers):
         self.mouse_down = True
         bx = x / float(self.width)
         by = y / float(self.height)
         self.update_mouse(bx, by)
 
-    def on_mouse_release(self, x, y, button, modifiers):  # pylint: disable=unused-argument
+    def on_mouse_release(self, x, y, button, modifiers):
         self.mouse_down = False
         self.update_mouse(-1, -1)
 
-    def on_mouse_drag(self, x, y, dx, dy, button, modifiers):  # pylint: disable=unused-argument
+    def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
         if self.mouse_down:
             bx = x / float(self.width)
             by = y / float(self.height)
