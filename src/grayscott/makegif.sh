@@ -1,4 +1,5 @@
 #!/bin/sh
 
-convert -delay 3 -layers Optimize frames/*.png grayscott.gif
+convert -delay 5 -layers Optimize frames/*.png grayscott.gif
 
+convert grayscott.gif \( +clone -set delay 300 \) +swap +delete grayscott.gif
