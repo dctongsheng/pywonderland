@@ -59,7 +59,7 @@ Julia 集 [[View Code](./src/misc/julia.py)]
 
 ---
 ### Domino Shuffling Algorithm Animation
-多米诺洗牌算法 [[View Code](./src/domino/)] [[Arctic Cirlce Phenomena](./img/randomtiling.png)] [[Wiki](https://en.wikipedia.org/wiki/Aztec_diamond)]
+多米诺洗牌算法 [[Code](./src/domino/)] [[Doc](https://github.com/neozhaoliang/pywonderland/wiki/Domino-Shuffling-Algorithm-Animation)]
 
 <br>
 
