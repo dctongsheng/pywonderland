@@ -10,6 +10,11 @@ For how to use mouse and keyboard to play with the simulation see the doc below.
 
 :copyright (c) 2017 by Zhao Liang.
 """
+import argparse
+import os
+
+if not os.path.exists('frames'):
+    os.makedirs('frames')
 
 import json
 import numpy as np
@@ -17,7 +22,7 @@ import numpy as np
 try:
     raw_input
 except NameError:
-    raw_input = input  # pylint: disable=redefined-builtin
+    raw_input = input
 
 import pyglet
 pyglet.options['debug_gl'] = False
@@ -72,18 +77,20 @@ class GrayScott(pyglet.window.Window):
     ----------------------------------------------------------
     """
 
-    def __init__(self, width, height, scale=2):
+    def __init__(self, width, height, pattern, scale, video):
         """
         width, height:
             size of the window in pixels.
         scale:
             the size of the texture is (width//scale) x (height//scale).
+        pattern: the initial pattern.
+        video: if non-zero then save frams from the beginning.
         """
         pyglet.window.Window.__init__(self, width, height, caption='GrayScott Simulation',
                                       visible=False, vsync=False)
 
         # palette is used for coloring the pattern.
-        self.pattern = 'unstable'
+        self.pattern = pattern
         self.palette = np.array([(0.0, 0.0, 0.0, 0.0),
                                  (0.0, 1.0, 0.0, 0.2),
                                  (1.0, 1.0, 0.0, 0.21),
@@ -112,10 +119,15 @@ class GrayScott(pyglet.window.Window):
 
         # put all patterns in a list for iterating over them.
         self._species = list(SPECIES.keys())
-
+ 
         # set the uniforms and varying attributes in the two shaders.
         self.init_reaction_shader()
         self.init_render_shader()
+
+        self.frame_count = 0
+        self.video_on = video
+        self.skip = 30
+        self.max_frames = 10000
 
     def set_viewport(self, width, height):
         gl.glViewport(0, 0, width, height)
@@ -139,6 +151,12 @@ class GrayScott(pyglet.window.Window):
         self.set_viewport(self.width, self.height)
         with self.render_shader:
             gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4)
+
+        if self.video_on:
+            if (self.frame_count % self.skip == 0) and (self.frame_count < self.max_frames):
+                self.save_video_frame(self.frame_count // self.skip)
+            
+        self.frame_count += 1
 
     def use_pattern(self, pattern):
         self.pattern = pattern
@@ -225,10 +243,23 @@ class GrayScott(pyglet.window.Window):
             if modifiers & pyglet.window.key.LCTRL:
                 self.load_config()
 
+        if symbol == pyglet.window.key.V:
+            if modifiers & pyglet.window.key.LCTRL:
+                self.video_on = not self.video_on
+                if self.video_on:
+                    print("start saving frames ...")
+                else:
+                    print("stop saving frames.")
+                self.frame_count = 0
+
     def save_screenshot(self):
         index = np.random.randint(0, 1000)
         img = pyglet.image.get_buffer_manager().get_color_buffer()
-        img.save('screenshot{:03d}.png'.format(index))
+        img.save('screenshot{:05d}.png'.format(index))
+
+    def save_video_frame(self, index):
+        img = pyglet.image.get_buffer_manager().get_color_buffer()
+        img.save(os.path.join('frames', 'frame{:05d}.png'.format(index)))
 
     def save_config(self):
         """Save current config to the json file."""
@@ -287,6 +318,22 @@ class GrayScott(pyglet.window.Window):
 
 
 if __name__ == '__main__':
-    app = GrayScott(width=600, height=480, scale=2)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-width', type=int, default=600,
+                        help='width of the window')
+    parser.add_argument('-height', type=int, default=480,
+                        help='height of the window')
+    parser.add_argument('-pattern', metavar='p', type=str, default='unstable',
+                        help='the initial pattern')
+    parser.add_argument('-scale', metavar='s', type=int, default=2,
+                        help='scaling of the texture')
+    parser.add_argument('-video', metavar='v', type=int, default=0,
+                        help='save frames at the beginning')
+
+    args = parser.parse_args()
+    if args.video not in [0, 1]:
+        raise ValueError("param [video] can only be 0 or 1")
+    app = GrayScott(args.width, args.height, args.pattern,
+                    args.scale, args.video)
     print(app.__doc__)
     app.run(fps=300)

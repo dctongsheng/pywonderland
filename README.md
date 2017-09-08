@@ -157,7 +157,7 @@ Wilson 一致生成树算法 [[View Code](./src/wilson/)] [[Wiki](https://en.wik
 
 ---
 ### Reaction-Diffusion Simulation
-反应扩散方程模拟 [[View Code](./src/grayscott/)] [[Doc](https://github.com/neozhaoliang/pywonderland/wiki/Reaction-Diffusion-Simulation)] [[View Webm Animation](./img/grayscott.webm)] [[Pmneila's Javascript Animation](http://pmneila.github.io/jsexp/grayscott/)]
+反应扩散方程模拟 [[Code](./src/grayscott/)] [[Doc](https://github.com/neozhaoliang/pywonderland/wiki/Reaction-Diffusion-Simulation)] [[Video](./img/grayscott.webm)]
 
 <br>
 
