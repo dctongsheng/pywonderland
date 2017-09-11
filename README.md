@@ -135,7 +135,7 @@ Newton 迭代分形 [[View Code](./src/misc/newton.py)] [[Wiki](https://en.wikip
 <br>
 
 <p align="center">
-<a herf="./img/penrose1.png"><img src="./img/penrose1.png" width="400"/></a><a herf="./img/penrose2.png"><img src="./img/penrose2.png" width="400"/></a><a herf="./img/penrose3.png"><img src="./img/penrose3.png" width=400"/></a> <a herf="./img/penrose4.png"><img src="./img/penrose4.png" width="400"/></a>
+<a herf="./img/penrose1.png"><img src="./img/penrose1.png" width="400"/></a> <a herf="./img/penrose2.png"><img src="./img/penrose2.png" width="400"/></a><a herf="./img/penrose3.png"><img src="./img/penrose3.png" width=400"/></a> <a herf="./img/penrose4.png"><img src="./img/penrose4.png" width="400"/></a>
 </p>
 
 <br>
