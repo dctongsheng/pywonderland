@@ -15,91 +15,99 @@ Usage: python penrose.py
 Each time you run this script it outputs a different pattern,
 these patterns are almost surely not isomorphic with each other.
 """
-
-from itertools import combinations, product
-import numpy as np
+import itertools
 import random
+import numpy as np
 import cairocffi as cairo
-from palettable.colorbrewer.qualitative import Set1_8
 
 
-def tile(girds, shifts, nlines):
-    """Generate all rhombi that lie in a given number of grid lines."""
-    for r, s in combinations(range(5), 2):
-        for kr, ks in product(range(-nlines, nlines+1), repeat=2):
+palette = [0xE41A1C, 0x377EB8, 0x4DAF4A, 0x984EA3, 0xFF7F00, 0xFFFF33,
+           0xA65628, 0xF781BF, 0x66C2A5, 0xFC8D62, 0x8DA0CB, 0xE78AC3,
+           0xA6D854, 0xFFD92F, 0xE5C494, 0xB3B3B3]
+
+WIDTH = 800
+HEIGHT = 400
+NUM_LINES = 20
+THIN_COLOR, FAT_COLOR, EDGE_COLOR = random.sample(palette, 3)
+GRIDS = [np.exp(2j*np.pi*i/5) for i in range(5)]
+SHIFTS = np.random.random(5)
+BACKGROUND_COLOR = 0x000000
+LINE_WIDTH = 0.1
+
+
+def hex_to_rgb(value):
+    r = ((value >> (8 * 2)) & 255) / 255.0
+    g = ((value >> (8 * 1)) & 255) / 255.0
+    b = ((value >> (8 * 0)) & 255) / 255.0
+    return np.asarray([r, g, b])
+
+
+def compute_rhombus(r, s, kr, ks):
+    """
+    Compute the vertices of a rhombus.
+    0 <= r < s <= 4 are the indices of the two grids in `GRIDS`.
+    kr, ks: indices of the two lines in the two grids specified by r, s.
+    return: four vertices of the rhombus corresponding to
+            the intersection of the two lines.
+    """
+    # The intersection point is the solution to a 2x2 linear equation:
+    # Re(z/GRIDS[r]) + SHIFTS[r] = kr
+    # Re(z/GRIDS[s]) + SHIFTS[s] = ks
+    intersect_point = (GRIDS[r] * (ks - SHIFTS[s])
+                     - GRIDS[s] * (kr - SHIFTS[r])) *1j / GRIDS[s-r].imag
+
+    # 5 integers that indicate the position of the intersection point.
+    # the i-th integer n_i indicates that this point lies in the n_i-th strip
+    # in the i-th grid.
+    index = [np.ceil((intersect_point/grid).real + shift)
+             for grid, shift in zip(GRIDS, SHIFTS)]
+    
+    # Be careful of the accuracy problem here.
+    # Mathematically the r-th and s-th item of index should be kr and ks,
+    # but programmingly it might not be the case,
+    # so we have to manually set them to be the correct values.
+    return [np.dot(index, GRIDS) for index[r], index[s] in
+            [(kr, ks), (kr+1, ks), (kr+1, ks+1), (kr, ks+1)]]
+
+
+
+def main():
+    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
+    ctx = cairo.Context(surface)
+    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    ctx.set_line_join(cairo.LINE_JOIN_ROUND)
+    ctx.set_line_width(LINE_WIDTH)
+    scale = max(WIDTH, HEIGHT) / (2.0 * NUM_LINES)
+    ctx.scale(scale, scale)
+    ctx.translate(NUM_LINES, NUM_LINES)
+
+    ctx.set_source_rgb(*hex_to_rgb(BACKGROUND_COLOR))
+    ctx.paint()
+
+    for r, s in itertools.combinations(range(5), 2):
+        for kr, ks in itertools.product(range(-NUM_LINES, NUM_LINES + 1), repeat=2):
             # if s-r = 1 or 4 then this is a thin rhombus, otherwise it's fat.
             if (s-r == 1 or s-r == 4):
-                shape = 1
+                color = hex_to_rgb(THIN_COLOR)
             else:
-                shape = 0
+                color = hex_to_rgb(FAT_COLOR)
 
-            # The intersection point is the solution to a 2x2 linear equation:
-            # Re(z/grids[r]) + shifts[r] = kr
-            # Re(z/grids[s]) + shifts[s] = ks
-            point = (grids[r] * (ks - shifts[s])
-                     - grids[s] * (kr - shifts[r])) *1j / grids[s-r].imag
+            ctx.set_source_rgb(*color)
+            A, B, C, D = compute_rhombus(r, s, kr, ks)
+            ctx.move_to(A.real, A.imag)
+            ctx.line_to(B.real, B.imag)
+            ctx.line_to(C.real, C.imag)
+            ctx.line_to(D.real, D.imag)
+            ctx.close_path()
+            ctx.fill_preserve()
 
-            # 5 integers that indicate the position of the intersection point.
-            # the i-th integer n_i indicates that this point lies in the n_i-th strip
-            # in the i-th grid.
-            index = [np.ceil((point/grid).real + shift)
-                     for grid, shift in zip(grids, shifts)]
+            ctx.set_source_rgb(*hex_to_rgb(EDGE_COLOR))
+            ctx.stroke()
 
-            # Be careful of the accuracy problem here.
-            # Mathematically the r-th and s-th item of index should be kr and ks,
-            # but programmingly it might not be the case,
-            # so we have to manually set them to be the correct values.
-            verts = []
-            for index[r], index[s] in [(kr, ks), (kr+1, ks), (kr+1, ks+1), (kr, ks+1)]:
-                verts.append(np.dot(index, grids))
-
-            yield verts, shape 
-            
-
-def render(imgsize, nlines, grids, shifts, palette, filename):
-    """
-    imgsize: (width, height) of the image in pixels.
-    nlines: label of the lines in each grid ranges from `-nlines` to `nlines`.
-    grids: five complex numbers specify the directions of the grids.
-    shifts: five real numbers specify the shift of each grid.
-    palette: three colors for thin, fat rhombi and their edges.
-    filename: outputs filename.
-    """
-    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, *imgsize)
-    ctx = cairo.Context(surface)
-    max_size = max(imgsize)
-    ctx.scale(max_size/(2.0*nlines), max_size/(2.0*nlines))
-    ctx.translate(nlines, nlines)
-    ctx.set_line_join(2)
-    ctx.set_line_width(0.1)
-
-    thin_color, fat_color, edge_color = palette
-
-    for rhombus, shape in tile(grids, shifts, nlines):
-        A, B, C, D = rhombus
-        ctx.move_to(A.real, A.imag)
-        ctx.line_to(B.real, B.imag)
-        ctx.line_to(C.real, C.imag)
-        ctx.line_to(D.real, D.imag)
-        ctx.line_to(A.real, A.imag)
-        if shape == 1:
-            ctx.set_source_rgb(*thin_color)
-        else:
-            ctx.set_source_rgb(*fat_color)
-
-        ctx.fill_preserve()
-        ctx.set_source_rgb(*edge_color)
-        ctx.stroke()
-
-    surface.write_to_png(filename)
+    print('shifts in the five directions:\n{}'.format(SHIFTS))
+    print('thin color: {:X} fat color: {:X} edge color: {:X}'.format(THIN_COLOR, FAT_COLOR, EDGE_COLOR))
+    surface.write_to_png('aperiodic_tiling.png')
 
 
 if __name__ == '__main__':
-    palette = random.sample(Set1_8.mpl_colors, 3)
-    grids = [np.exp(2j*np.pi*i/5) for i in range(5)]
-    # if the five real numbers in `shifts` sum to an integer then
-    # it's the famous Penrose tiling.
-    shifts = np.random.random(5)
-    #shifts = (0.5, 0.5, 0.5, 0.5, 0.5)
-    render(imgsize=(800, 400), nlines=30, grids=grids,
-           shifts=shifts, palette=palette, filename='penrose.png')
+    main()
