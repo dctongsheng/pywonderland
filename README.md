@@ -130,12 +130,12 @@ Newton 迭代分形 [[View Code](./src/misc/newton.py)] [[Wiki](https://en.wikip
 
 ---
 ### Generalized Penrose Tilings
-彭罗斯铺砌 [[View Code](./src/misc/penrose.py)] [[Wiki](https://en.wikipedia.org/wiki/Penrose_tiling)]
+彭罗斯铺砌 [[View Code](./src/misc/penrose.py)] [[Doc](https://github.com/neozhaoliang/pywonderland/wiki/Generalized-Penrose-Tilings)]
 
 <br>
 
 <p align="center">
-<img src="./img/penrose.gif"/>
+<a herf="./img/penrose1.png"><img src="./img/penrose1.png" width="400"/></a><a herf="./img/penrose2.png"><img src="./img/penrose2.png" width="400"/></a><a herf="./img/penrose3.png"><img src="./img/penrose3.png" width=400"/></a> <a herf="./img/penrose4.png"><img src="./img/penrose4.png" width="400"/></a>
 </p>
 
 <br>

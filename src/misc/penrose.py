@@ -25,9 +25,9 @@ palette = [0xE41A1C, 0x377EB8, 0x4DAF4A, 0x984EA3, 0xFF7F00, 0xFFFF33,
            0xA65628, 0xF781BF, 0x66C2A5, 0xFC8D62, 0x8DA0CB, 0xE78AC3,
            0xA6D854, 0xFFD92F, 0xE5C494, 0xB3B3B3]
 
-WIDTH = 800
-HEIGHT = 400
-NUM_LINES = 20
+WIDTH = 1200
+HEIGHT = 720
+NUM_LINES = 25
 THIN_COLOR, FAT_COLOR, EDGE_COLOR = random.sample(palette, 3)
 GRIDS = [np.exp(2j*np.pi*i/5) for i in range(5)]
 SHIFTS = np.random.random(5)
